@@ -1,4 +1,8 @@
-const ErrorMessage = ({ messageError }) => {
+type Props = {
+  messageError: string;
+};
+
+const ErrorMessage = ({ messageError }: Props) => {
   return (
     <div>
       {messageError && (

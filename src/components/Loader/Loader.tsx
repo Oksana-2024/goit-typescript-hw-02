@@ -1,6 +1,10 @@
 import { RotatingLines } from "react-loader-spinner";
 import s from "./Loader.module.css";
 
+// const LoaderType = {
+//   visible:;
+// }
+
 export default function Loader({ visible }) {
   return (
     <div className={s.loader}>
