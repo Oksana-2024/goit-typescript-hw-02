@@ -1,7 +1,10 @@
-import ImageCard from "../ImageCard/ImageCard";
+import { Image } from "../App/App";
+import ImageCard, { ImageCardProps } from "../ImageCard/ImageCard";
 import s from "./ImageGallery.module.css";
 
-function ImageGallery({ images, onClick }) {
+
+
+function ImageGallery({ images, onClick }:{images:Image[], onClick:ImageCardProps["onClick"]}) {
   return (
     <ul className={s.galleryList}>
       {images.map(({ id, ...image }) => (

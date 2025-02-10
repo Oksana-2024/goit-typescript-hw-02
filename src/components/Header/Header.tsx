@@ -1,10 +1,10 @@
 import s from "./Header.module.css";
 
-type Props = {
+type HeaderProps = {
   children: React.ReactNode;
 };
 
-export default function Header({ children }: Props) {
+export default function Header({ children }: HeaderProps) {
   return (
     <>
       <header className={s.headerPage}> {children}</header>

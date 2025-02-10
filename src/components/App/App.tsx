@@ -10,17 +10,39 @@ import ErrorMessage from "../ErrorMessage/ErrorMessage";
 import LoadMoreBtn from "../LoadMoreBtn/LoadMoreBtn";
 import "./App.css";
 
+export interface UrlItem {
+  small: string;
+  regular: string;
+}
+export interface User {
+  name: string;
+}
+export interface Image {
+  urls: UrlItem;
+  likes: number;
+  alt_description: string;
+  user: User;
+  id: number;
+}
+
+export interface ImageResult {
+  results: Image[];
+  total_pages: number;
+}
+
 function App() {
-  const [images, setImages] = useState([]);
+  const [images, setImages] = useState<Image[]>([]);
   const [loader, setLoader] = useState(false);
   const [messageError, setMessageError] = useState(false);
   const [modalIsOpen, setIsOpen] = useState(false);
-  const [selectedPhoto, setSelectedPhoto] = useState();
+  const [selectedPhoto, setSelectedPhoto] = useState<Partial<Image> | null>(
+    null
+  );
   const [loadMore, setLoadMore] = useState(false);
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
 
-  const handleSubmit = (query) => {
+  const handleSubmit = (query: string) => {
     if (query.trim()) {
       setSearch(query);
       fetchImagesData(query);
@@ -28,11 +50,11 @@ function App() {
     }
   };
 
-  const fetchImagesData = async (query, page = 1) => {
+  const fetchImagesData = async (query: string, page = 1) => {
     try {
       setLoader(true);
       setMessageError(false);
-      const { results, total_pages } = await fetchImages("/search/photos", {
+      const { results, total_pages } = await fetchImages<ImageResult>("/search/photos", {
         query: query,
         page: page,
       });
@@ -57,7 +79,7 @@ function App() {
     setIsOpen(false);
   }
 
-  const handleClick = (e, item) => {
+  const handleClick = (e: Event, item: Partial<Image>) => {
     e.preventDefault();
     openModal();
     setSelectedPhoto(item);
@@ -67,7 +89,9 @@ function App() {
     const nextPage = page + 1;
     setPage(nextPage);
     await fetchImagesData(search, nextPage);
-    setTimeout(scrollBy.bind(null, { behavior: "smooth", top: 580 }), 50);
+    setTimeout(() => {
+      scrollBy({ behavior: "smooth", top: 580 });
+    }, 50);
   };
 
   return (
@@ -82,9 +106,8 @@ function App() {
         <ImageModal
           closeModal={closeModal}
           modalIsOpen={modalIsOpen}
-          openModal={openModal}
           alt={selectedPhoto?.alt_description}
-          image={selectedPhoto?.urls.regular}
+          image={selectedPhoto?.urls?.regular}
         />
         <ErrorMessage messageError={messageError} />
         {loadMore && <LoadMoreBtn onClick={onLoadMore} />}

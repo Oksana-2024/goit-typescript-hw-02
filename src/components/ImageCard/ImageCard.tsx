@@ -1,12 +1,13 @@
+import { Image, UrlItem, User } from "../App/App";
 import s from "./ImageCard.module.css";
 import { FcLike } from "react-icons/fc";
 
-type ImageCardProps = {
-  onClick: (Object | string) => void;
-  urls: Object;
+export interface ImageCardProps {
+  onClick: (e: Event, image: Partial<Image>) => void;
+  urls: UrlItem;
   likes: number;
   alt_description: string;
-  user: Object;
+  user: User;
 }
 
 export default function ImageCard({
@@ -23,7 +24,7 @@ export default function ImageCard({
         alt={alt_description}
         width={300}
         className={s.imageCard}
-        onClick={(e) => onClick(e, { urls, alt_description })}
+        onClick={(e: any) => onClick(e, { urls, alt_description })}
       />
       <div className={s.discrBox}>
         <div className={s.author}>
