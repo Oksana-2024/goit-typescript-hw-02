@@ -46,6 +46,7 @@ function App() {
 
   const handleSubmit = (query: string) => {
     setSearch(query);
+    setPage(1);
     return;
   };
 
@@ -54,7 +55,7 @@ function App() {
     setPage(nextPage);
   };
 
-  const fetchImagesData = async (query, page = 1) => {
+  const fetchImagesData = async (query:string, page = 1) => {
     try {
       setLoader(true);
       setMessageError(false);
@@ -83,9 +84,9 @@ function App() {
       return;
     }
     fetchImagesData(search, page);
-    
+
     if (page > 1) {
-      setTimeout(()=>scrollBy({ behavior: "smooth", top: 580 }), 50);
+      setTimeout(() => scrollBy({ behavior: "smooth", top: 580 }), 50);
     }
   }, [search, page]);
 
