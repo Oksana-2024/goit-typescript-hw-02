@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
-import Header from "../Header/Header";
 import { fetchImages } from "../../services/api";
+import Header from "../Header/Header";
 import SearchBar from "../SearchBar/SearchBar";
 import Loader from "../Loader/Loader";
 import ImageModal from "../ImageModal/ImageModal";
@@ -30,31 +30,38 @@ export interface ImageResult {
   total_pages: number;
 }
 
+type State = boolean;
+
 function App() {
   const [images, setImages] = useState<Image[]>([]);
-  const [loader, setLoader] = useState(false);
-  const [messageError, setMessageError] = useState(false);
-  const [modalIsOpen, setIsOpen] = useState(false);
+  const [loader, setLoader] = useState<State>(false);
+  const [messageError, setMessageError] = useState<State>(false);
+  const [modalIsOpen, setIsOpen] = useState<State>(false);
   const [selectedPhoto, setSelectedPhoto] = useState<Partial<Image> | null>(
     null
   );
-  const [loadMore, setLoadMore] = useState(false);
-  const [page, setPage] = useState(1);
-  const [search, setSearch] = useState("");
+  const [loadMore, setLoadMore] = useState<State>(false);
+  const [page, setPage] = useState<number>(1);
+  const [search, setSearch] = useState<string>("");
 
   const handleSubmit = (query: string) => {
-    if (query.trim()) {
-      setSearch(query);
-      fetchImagesData(query);
-      return;
-    }
+    setSearch(query);
+    return;
   };
 
-  const fetchImagesData = async (query: string, page = 1) => {
+  const onLoadMore = () => {
+    const nextPage = page + 1;
+    setPage(nextPage);
+  };
+
+  const fetchImagesData = async (query, page = 1) => {
     try {
       setLoader(true);
       setMessageError(false);
-      const { results, total_pages } = await fetchImages<ImageResult>("/search/photos", {
+      const { results, total_pages } = await fetchImages<{
+        total_pages: number;
+        results: Image[];
+      }>("/search/photos", {
         query: query,
         page: page,
       });
@@ -71,6 +78,17 @@ function App() {
     }
   };
 
+  useEffect(() => {
+    if (!search) {
+      return;
+    }
+    fetchImagesData(search, page);
+    
+    if (page > 1) {
+      setTimeout(()=>scrollBy({ behavior: "smooth", top: 580 }), 50);
+    }
+  }, [search, page]);
+
   function openModal() {
     setIsOpen(true);
   }
@@ -83,15 +101,6 @@ function App() {
     e.preventDefault();
     openModal();
     setSelectedPhoto(item);
-  };
-
-  const onLoadMore = async () => {
-    const nextPage = page + 1;
-    setPage(nextPage);
-    await fetchImagesData(search, nextPage);
-    setTimeout(() => {
-      scrollBy({ behavior: "smooth", top: 580 });
-    }, 50);
   };
 
   return (
